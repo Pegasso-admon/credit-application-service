@@ -596,7 +596,7 @@ CREATE TABLE risk_evaluations (
 
 ---
 
-## 👥 Contributors
+## 👥 Author
 
 - Samuel Rosero Alvarez
 - Clan: Berners Lee

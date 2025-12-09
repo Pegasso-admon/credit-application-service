@@ -1,6 +1,7 @@
 package com.coopcredit.domain.service;
 
 import java.math.BigDecimal;
+import com.coopcredit.domain.model.RiskEvaluation;
 
 /**
  * Service port for external risk evaluation operations.
@@ -51,43 +52,10 @@ public interface RiskEvaluationPort {
      * @param document        the affiliate's identification document
      * @param requestedAmount the credit amount being requested
      * @param termMonths      the requested term in months
-     * @return RiskEvaluationResponse containing score, risk level, and details
+     * @return RiskEvaluation domain model containing score and risk level
      * @throws IllegalArgumentException if parameters are invalid
      * @throws RuntimeException         if external service is unavailable
      */
-    RiskEvaluationResponse evaluateRisk(String document, BigDecimal requestedAmount, Integer termMonths);
+    RiskEvaluation evaluateRisk(String document, BigDecimal requestedAmount, Integer termMonths);
 
-    /**
-     * Data transfer object for risk evaluation responses.
-     * <p>
-     * This nested class is part of the port contract and should remain
-     * framework-agnostic.
-     * </p>
-     */
-    record RiskEvaluationResponse(
-            String document,
-            Integer score,
-            String riskLevel,
-            String detail) {
-        /**
-         * Creates a new RiskEvaluationResponse.
-         *
-         * @param document  affiliate's document number
-         * @param score     credit score (300-950)
-         * @param riskLevel risk classification (LOW, MEDIUM, HIGH)
-         * @param detail    additional evaluation details
-         * @throws IllegalArgumentException if score is out of range
-         */
-        public RiskEvaluationResponse {
-            if (score < 300 || score > 950) {
-                throw new IllegalArgumentException("Score must be between 300 and 950");
-            }
-            if (document == null || document.isBlank()) {
-                throw new IllegalArgumentException("Document cannot be null or empty");
-            }
-            if (riskLevel == null || riskLevel.isBlank()) {
-                throw new IllegalArgumentException("Risk level cannot be null or empty");
-            }
-        }
-    }
 }
