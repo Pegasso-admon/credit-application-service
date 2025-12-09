@@ -82,7 +82,7 @@ public class RiskCentralClient implements RiskEvaluationPort {
             RiskEvaluationResponse response = callRiskCentralService(request);
 
             log.info("Risk evaluation received - Document: {}, Score: {}, Risk Level: {}",
-                    document, response.score(), response.nivelRiesgo());
+                    document, response.score(), response.riskLevel());
 
             return mapResponseToDomain(response);
 
@@ -160,13 +160,13 @@ public class RiskCentralClient implements RiskEvaluationPort {
             throw new IllegalStateException("Risk evaluation response is null");
         }
 
-        RiskLevel riskLevel = mapRiskLevel(response.nivelRiesgo());
+        RiskLevel riskLevel = mapRiskLevel(response.riskLevel());
         boolean isHighRisk = riskLevel == RiskLevel.HIGH;
 
         return RiskEvaluation.builder()
                 .score(response.score())
                 .riskLevel(riskLevel)
-                .detail(response.detalle())
+                .detail(response.detail())
                 .approved(!isHighRisk)
                 .rejectionReason(isHighRisk ? "High risk level from credit bureau" : null)
                 .build();

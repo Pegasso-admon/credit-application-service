@@ -108,6 +108,13 @@ public class JpaAffiliateRepositoryAdapter implements AffiliateRepositoryPort {
         log.info("Successfully deleted affiliate with ID: {}", id);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public java.util.List<Affiliate> findAll() {
+        log.debug("Finding all affiliates");
+        return mapper.toDomainList(jpaRepository.findAll());
+    }
+
     private void validateAffiliate(Affiliate affiliate) {
         if (affiliate == null) {
             throw new IllegalArgumentException("Affiliate cannot be null");

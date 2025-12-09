@@ -1,70 +1,25 @@
 version: '3.8'
 
 services:
-  postgres:
-    image: postgres:16-alpine
-    container_name: coopcredit-postgres
-    environment:
-      POSTGRES_DB: coopcredit_db
-      POSTGRES_USER: coopcredit_user
-      POSTGRES_PASSWORD: coopcredit_pass
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - coopcredit-network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U coopcredit_user -d coopcredit_db"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    restart: unless-stopped
-
-  risk-central-mock-service:
-    build:
-      context: ./risk-central-mock-service
-      dockerfile: Dockerfile
-    container_name: risk-central-mock
-    environment:
-      SERVER_PORT: 8081
-      SPRING_PROFILES_ACTIVE: docker
-    ports:
-      - "8081:8081"
-    networks:
-      - coopcredit-network
-    healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8081/risk-evaluation/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 20s
-    restart: unless-stopped
-
-  credit-application-service:
-    build:
-      context: ./credit-application-service
-      dockerfile: Dockerfile
+  app:
+    build: .
     container_name: credit-application-service
-    depends_on:
-      postgres:
-        condition: service_healthy
-      risk-central-mock-service:
-        condition: service_healthy
-    environment:
-      SPRING_PROFILES_ACTIVE: docker
-      DATABASE_URL: jdbc:postgresql://postgres:5432/coopcredit_db
-      DATABASE_USERNAME: coopcredit_user
-      DATABASE_PASSWORD: coopcredit_pass
-      RISK_CENTRAL_URL: http://risk-central-mock-service:8081
-      JWT_SECRET: 404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
-      SERVER_PORT: 8080
     ports:
       - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/coopcredit_db
+      - SPRING_DATASOURCE_USERNAME=coopcredit_user
+      - SPRING_DATASOURCE_PASSWORD=coopcredit_pass
+      - RISK_CENTRAL_URL=http://risk-central:8081
+      - JWT_SECRET=404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970
+    depends_on:
+      db:
+        condition: service_healthy
+      risk-central:
+        condition: service_healthy
     networks:
-      - coopcredit-network
-    volumes:
-      - app_logs:/app/logs
+      - coopcredit-net
     healthcheck:
       test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
       interval: 30s
@@ -73,12 +28,60 @@ services:
       start_period: 60s
     restart: unless-stopped
 
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: credit-application-frontend
+    ports:
+      - "5173:5173"
+    networks:
+      - coopcredit-net
+    depends_on:
+      - app
+    restart: unless-stopped
+
+  db:
+    image: postgres:15-alpine
+    container_name: coopcredit-postgres
+    environment:
+      - POSTGRES_DB=coopcredit_db
+      - POSTGRES_USER=coopcredit_user
+      - POSTGRES_PASSWORD=coopcredit_pass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - coopcredit-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U coopcredit_user -d coopcredit_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  risk-central:
+    build:
+      context: ./risk-central-mock-service
+      dockerfile: Dockerfile
+    container_name: risk-central-mock
+    ports:
+      - "8081:8081"
+    environment:
+      - SERVER_PORT=8081
+    networks:
+      - coopcredit-net
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8081/risk-evaluation/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
 networks:
-  coopcredit-network:
+  coopcredit-net:
     driver: bridge
 
 volumes:
   postgres_data:
-    driver: local
-  app_logs:
-    driver: local

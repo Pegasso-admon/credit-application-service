@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CoopCredit | Financial Services</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <div id="notification-area"></div>
+
+  <!-- Login View -->
+  <div id="auth-container">
+    <div class="auth-card">
+      <div class="auth-header">
+        <h2>CoopCredit</h2>
+        <p>Secure Employee Access</p>
+      </div>
+      <form id="login-form">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" placeholder="e.g. analyst1" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" required>
+        </div>
+        <button type="submit" class="btn btn-primary btn-success">Sign In</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- App View (Hidden by default) -->
+  <div id="app-container" class="hidden">
+    <header>
+      <div class="header-title">
+        <h1>Dashboard</h1>
+      </div>
+      <div class="user-info">
+        <span id="user-display">Logged in as: User</span>
+        <button id="logout-btn" class="btn btn-ghost btn-sm">Logout</button>
+      </div>
+    </header>
+
+    <div class="grid-cols-2">
+      <!-- Affiliate Management -->
+      <section>
+        <h2>Create Affiliate</h2>
+        <form id="affiliate-form">
+          <div class="form-group">
+            <label for="docNumber">Document Number</label>
+            <input type="text" id="docNumber" placeholder="Enter ID number" required>
+          </div>
+          <div class="form-group">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" placeholder="Enter full name" required>
+          </div>
+          <div class="form-group">
+            <label for="salary">Monthly Salary</label>
+            <input type="number" id="salary" placeholder="0.00" min="0" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Register Affiliate</button>
+        </form>
+      </section>
+
+      <!-- Credit Application -->
+      <section>
+        <h2>New Credit Application</h2>
+        <form id="credit-form">
+          <div class="form-group">
+            <label for="affiliateId">Affiliate ID (Database ID)</label>
+            <input type="number" id="affiliateId" placeholder="ID from created affiliate" required>
+          </div>
+          <div class="form-group">
+            <label for="amount">Requested Amount</label>
+            <input type="number" id="amount" placeholder="0.00" min="1" required>
+          </div>
+          <div class="form-group">
+            <label for="term">Term (Months)</label>
+            <input type="number" id="term" placeholder="12" min="1" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Submit Application</button>
+        </form>
+      </section>
+    </div>
+
+    <!-- Applications List -->
+    <section>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <h2 style="margin-bottom: 0; border: none;">Applications Overview</h2>
+        <button id="refresh-btn" class="btn btn-ghost btn-sm">Refresh List</button>
+      </div>
+      <div class="table-container">
+        <table id="applications-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Affiliate ID</th>
+              <th>Date</th>
+              <th>Amount</th>
+              <th>Term</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="applications-body">
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <script type="module" src="/main.js"></script>
+</body>
+
+</html>

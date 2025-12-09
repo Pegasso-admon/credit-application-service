@@ -24,5 +24,6 @@ CREATE INDEX idx_credit_date_status ON credit_applications(application_date DESC
 -- Add index for risk evaluation queries
 CREATE INDEX idx_risk_level_score ON risk_evaluations(risk_level, score DESC);
 
-COMMENT ON CONSTRAINT fk_credit_affiliate ON credit_applications IS 'Links credit application to affiliate';
+-- Comment removed for H2 compatibility
+
 COMMENT ON CONSTRAINT fk_risk_credit_application ON risk_evaluations IS 'Links risk evaluation to credit application';

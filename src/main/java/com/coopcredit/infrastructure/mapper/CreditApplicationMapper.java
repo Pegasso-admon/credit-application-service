@@ -15,6 +15,15 @@ public interface CreditApplicationMapper {
     @Mapping(target = "affiliate", source = "affiliate")
     CreditApplication toDomain(CreditApplicationEntity entity);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "status", constant = "PENDING")
+    @Mapping(target = "applicationDate", ignore = true)
+    @Mapping(target = "interestRate", ignore = true)
+    @Mapping(target = "riskEvaluation", ignore = true)
+    @Mapping(target = "decisionReason", ignore = true)
+    @Mapping(target = "affiliate", ignore = true)
+    CreditApplication toDomain(com.coopcredit.infrastructure.controller.dto.CreditApplicationRequest request);
+
     @Mapping(target = "status", source = "status")
     @Mapping(target = "affiliate", source = "affiliate")
     @Mapping(target = "createdAt", ignore = true)

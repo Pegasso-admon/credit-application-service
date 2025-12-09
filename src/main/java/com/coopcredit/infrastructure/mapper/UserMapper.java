@@ -43,8 +43,8 @@ public interface UserMapper {
             return null;
         }
         return switch (role) {
-            case ROLE_AFFILIATE -> UserEntity.RoleEntity.ROLE_AFILIADO;
-            case ROLE_ANALYST -> UserEntity.RoleEntity.ROLE_ANALISTA;
+            case ROLE_AFFILIATE -> UserEntity.RoleEntity.ROLE_AFFILIATE;
+            case ROLE_ANALYST -> UserEntity.RoleEntity.ROLE_ANALYST;
             case ROLE_ADMIN -> UserEntity.RoleEntity.ROLE_ADMIN;
         };
     }
@@ -60,8 +60,8 @@ public interface UserMapper {
             return null;
         }
         return switch (roleEntity) {
-            case ROLE_AFILIADO -> Role.ROLE_AFFILIATE;
-            case ROLE_ANALISTA -> Role.ROLE_ANALYST;
+            case ROLE_AFFILIATE -> Role.ROLE_AFFILIATE;
+            case ROLE_ANALYST -> Role.ROLE_ANALYST;
             case ROLE_ADMIN -> Role.ROLE_ADMIN;
         };
     }

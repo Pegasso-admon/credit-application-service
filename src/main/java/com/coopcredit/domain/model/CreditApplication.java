@@ -415,4 +415,22 @@ public final class CreditApplication {
                     riskEvaluation, decisionReason);
         }
     }
+
+    /**
+     * Creates a builder initialized with the current instance values.
+     *
+     * @return initialized Builder
+     */
+    public CreditApplicationBuilder toBuilder() {
+        return new CreditApplicationBuilder()
+                .id(this.id)
+                .affiliate(this.affiliate)
+                .requestedAmount(this.requestedAmount)
+                .termMonths(this.termMonths)
+                .interestRate(this.interestRate)
+                .applicationDate(this.applicationDate)
+                .status(this.status)
+                .riskEvaluation(this.riskEvaluation)
+                .decisionReason(this.decisionReason);
+    }
 }

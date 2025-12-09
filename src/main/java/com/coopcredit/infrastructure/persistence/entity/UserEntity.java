@@ -71,8 +71,8 @@ public class UserEntity {
      * Enum representing user roles in the system.
      */
     public enum RoleEntity {
-        ROLE_AFILIADO,
-        ROLE_ANALISTA,
+        ROLE_AFFILIATE,
+        ROLE_ANALYST,
         ROLE_ADMIN
     }
 }

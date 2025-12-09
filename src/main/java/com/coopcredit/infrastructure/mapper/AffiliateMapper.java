@@ -2,6 +2,7 @@ package com.coopcredit.infrastructure.mapper;
 
 import com.coopcredit.domain.model.Affiliate;
 import com.coopcredit.domain.model.enums.AffiliateStatus;
+import com.coopcredit.infrastructure.controller.dto.AffiliateRequest;
 import com.coopcredit.infrastructure.persistence.entity.AffiliateEntity;
 import org.mapstruct.*;
 
@@ -13,6 +14,16 @@ public interface AffiliateMapper {
     @Mapping(target = "status", source = "status")
     Affiliate toDomain(AffiliateEntity entity);
 
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "status", constant = "ACTIVE")
+    Affiliate toDomain(AffiliateRequest request);
+
+    /**
+     * Converts Affiliate domain model to AffiliateEntity.
+     *
+     * @param domain the Affiliate domain model to convert
+     * @return the AffiliateEntity
+     */
     @Mapping(target = "status", source = "status")
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)

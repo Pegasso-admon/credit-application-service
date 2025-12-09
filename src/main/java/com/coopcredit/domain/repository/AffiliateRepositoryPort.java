@@ -22,23 +22,24 @@ import java.util.Optional;
  *
  * <h2>Implementation Requirements:</h2>
  * <ul>
- *   <li>Document uniqueness must be enforced</li>
- *   <li>All operations should be transactional</li>
- *   <li>Concurrent access should be handled safely</li>
+ * <li>Document uniqueness must be enforced</li>
+ * <li>All operations should be transactional</li>
+ * <li>Concurrent access should be handled safely</li>
  * </ul>
  */
 public interface AffiliateRepositoryPort {
-    
+
     /**
      * Persists a new affiliate or updates an existing one.
      *
      * @param affiliate the affiliate to save
      * @return the persisted affiliate with generated ID if new
      * @throws IllegalArgumentException if affiliate is null
-     * @throws RuntimeException if document already exists for a different affiliate
+     * @throws RuntimeException         if document already exists for a different
+     *                                  affiliate
      */
     Affiliate save(Affiliate affiliate);
-    
+
     /**
      * Retrieves an affiliate by their unique identifier.
      *
@@ -47,7 +48,7 @@ public interface AffiliateRepositoryPort {
      * @throws IllegalArgumentException if id is null
      */
     Optional<Affiliate> findById(Long id);
-    
+
     /**
      * Retrieves an affiliate by their document number.
      * <p>
@@ -59,7 +60,7 @@ public interface AffiliateRepositoryPort {
      * @throws IllegalArgumentException if document is null or blank
      */
     Optional<Affiliate> findByDocument(String document);
-    
+
     /**
      * Checks if an affiliate with the given document exists.
      *
@@ -68,7 +69,7 @@ public interface AffiliateRepositoryPort {
      * @throws IllegalArgumentException if document is null or blank
      */
     boolean existsByDocument(String document);
-    
+
     /**
      * Deletes an affiliate by their unique identifier.
      * <p>
@@ -80,4 +81,11 @@ public interface AffiliateRepositoryPort {
      * @throws IllegalArgumentException if id is null
      */
     void deleteById(Long id);
+
+    /**
+     * Retrieves all affiliates.
+     *
+     * @return list of all affiliates
+     */
+    java.util.List<Affiliate> findAll();
 }
