@@ -72,36 +72,44 @@ const updateView = () => {
     }
 };
 
-const login = async (username, password) => {
+// Login Handler
+forms.login?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+
     try {
-        const response = await fetch('/api/auth/login', {
+        // Real API call to backend
+        const response = await fetch('http://localhost:8080/api/auth/login', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username, password })
         });
 
-        if (!response.ok) throw { status: response.status, message: 'Invalid credentials' };
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.detail || 'Login failed');
+        }
 
         const data = await response.json();
 
+        // Store authentication data
         state.token = data.token;
-        state.username = username;
+        state.username = data.username;
+        state.role = data.role;
 
-        // Decode token payload for role (simple decode)
-        const payload = JSON.parse(atob(data.token.split('.')[1]));
-        state.role = payload.role;
+        localStorage.setItem('authToken', data.token);
+        localStorage.setItem('username', data.username);
+        localStorage.setItem('userRole', data.role);
 
-        localStorage.setItem('authToken', state.token);
-        localStorage.setItem('username', state.username);
-        localStorage.setItem('userRole', state.role);
-
-        updateView();
-        showNotification('Login successful', 'success');
-
+        showNotification(`Welcome ${data.username}! (${data.role})`, 'success');
+        showApp();
+        loadApplications();
     } catch (error) {
-        handleApiError(error);
+        console.error('Login error:', error);
+        showNotification(error.message || 'Login failed. Please check your credentials.', 'error');
     }
-};
+});
 
 const logout = () => {
     state.token = null;
@@ -167,17 +175,38 @@ const createCreditApplication = async (e) => {
 
 const loadApplications = async () => {
     try {
-        const response = await fetch('/api/v1/credit-applications/pending', {
+        // Real API call to get credit applications
+        const response = await fetch('http://localhost:8080/api/credit-applications', {
             headers: getHeaders()
         });
 
-        if (!response.ok) throw { status: response.status, message: 'Failed to fetch applications' };
+        if (!response.ok) {
+            if (response.status === 401) {
+                showNotification('Session expired. Please login again.', 'error');
+                logout();
+                return;
+            }
+            throw new Error('Failed to load applications');
+        }
 
         const applications = await response.json();
-        renderApplications(applications);
+        renderApplications(applications); // Changed from displayApplications to renderApplications
+        showNotification(`Loaded ${applications.length} applications`, 'success');
     } catch (error) {
-        handleApiError(error);
-        elements.applicationsBody.innerHTML = '<tr><td colspan="7" class="text-center">Error loading data</td></tr>';
+        console.error('Load error:', error);
+        showNotification(error.message || 'Failed to load applications', 'error');
+
+        // Display empty state
+        if (elements.applicationsBody) {
+            elements.applicationsBody.innerHTML = `
+                <tr>
+                    <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+                        <p style="margin: 0; font-size: 1.1rem;">⚠️ Failed to load applications</p>
+                        <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem;">${error.message}</p>
+                    </td>
+                </tr>
+            `;
+        }
     }
 };
 
