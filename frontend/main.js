@@ -103,8 +103,7 @@ forms.login?.addEventListener('submit', async (e) => {
         localStorage.setItem('userRole', data.role);
 
         showNotification(`Welcome ${data.username}! (${data.role})`, 'success');
-        showApp();
-        loadApplications();
+        updateView();  // Show the app container and hide login
     } catch (error) {
         console.error('Login error:', error);
         showNotification(error.message || 'Login failed. Please check your credentials.', 'error');
@@ -175,8 +174,8 @@ const createCreditApplication = async (e) => {
 
 const loadApplications = async () => {
     try {
-        // Real API call to get credit applications
-        const response = await fetch('http://localhost:8080/api/credit-applications', {
+        // Real API call to get pending credit applications
+        const response = await fetch('http://localhost:8080/api/v1/credit-applications/pending', {
             headers: getHeaders()
         });
 

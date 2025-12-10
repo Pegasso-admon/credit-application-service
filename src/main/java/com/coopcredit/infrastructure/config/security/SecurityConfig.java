@@ -18,6 +18,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 /**
  * Security configuration for the application.
@@ -60,6 +65,23 @@ public class SecurityConfig {
         };
 
         /**
+         * Configure CORS to allow frontend communication from localhost:5173
+         */
+        @Bean
+        public CorsConfigurationSource corsConfigurationSource() {
+                CorsConfiguration configuration = new CorsConfiguration();
+                configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://localhost:3000"));
+                configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                configuration.setAllowedHeaders(Arrays.asList("*"));
+                configuration.setAllowCredentials(true);
+                configuration.setMaxAge(3600L);
+
+                UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+                source.registerCorsConfiguration("/**", configuration);
+                return source;
+        }
+
+        /**
          * Configures the security filter chain with JWT authentication.
          *
          * @param http the HttpSecurity to configure
@@ -69,30 +91,35 @@ public class SecurityConfig {
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
                 http
-                                .csrf(AbstractHttpConfigurer::disable)
-                                .cors(AbstractHttpConfigurer::disable)
+                                .csrf(csrf -> csrf.disable())
+                                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                                .exceptionHandling(exception -> exception
+                                                .authenticationEntryPoint(authenticationEntryPoint))
+                                .sessionManagement(session -> session
+                                                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                                 .authorizeHttpRequests(auth -> auth
                                                 .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
-                                                .requestMatchers(HttpMethod.POST, "/api/v1/affiliates").hasRole("ADMIN")
-                                                .requestMatchers(HttpMethod.PUT, "/api/v1/affiliates/**")
+
+                                                // Affiliate endpoints
+                                                .requestMatchers(HttpMethod.GET, "/api/affiliates/**")
+                                                .hasAnyRole("ANALYST", "ADMIN")
+                                                .requestMatchers(HttpMethod.POST, "/api/affiliates")
                                                 .hasRole("ADMIN")
-                                                .requestMatchers(HttpMethod.DELETE, "/api/v1/affiliates/**")
+                                                .requestMatchers(HttpMethod.PUT, "/api/affiliates/**")
                                                 .hasRole("ADMIN")
-                                                .requestMatchers(HttpMethod.GET, "/api/v1/affiliates/**")
-                                                .hasAnyRole("ADMIN", "ANALYST")
-                                                .requestMatchers(HttpMethod.POST, "/api/v1/credit-applications")
-                                                .hasAnyRole("AFFILIATE", "ADMIN")
-                                                .requestMatchers(HttpMethod.GET, "/api/v1/credit-applications/pending")
-                                                .hasAnyRole("ANALYST", "ADMIN")
-                                                .requestMatchers(HttpMethod.POST,
-                                                                "/api/v1/credit-applications/*/evaluate")
-                                                .hasAnyRole("ANALYST", "ADMIN")
-                                                .requestMatchers(HttpMethod.GET,
-                                                                "/api/v1/credit-applications/affiliate/**")
-                                                .hasAnyRole("AFFILIATE", "ADMIN")
-                                                .requestMatchers(HttpMethod.GET, "/api/v1/credit-applications/**")
-                                                .hasAnyRole("ANALYST", "ADMIN")
-                                                .requestMatchers("/actuator/**").hasRole("ADMIN")
+
+                                                // Credit Application endpoints
+                                                .requestMatchers(HttpMethod.POST, "/api/credit-applications")
+                                                .hasRole("AFFILIATE")
+                                                .requestMatchers(HttpMethod.GET, "/api/credit-applications/**")
+                                                .authenticated()
+                                                .requestMatchers(HttpMethod.POST, "/api/credit-applications/*/evaluate")
+                                                .hasRole("ANALYST")
+                                                .requestMatchers(HttpMethod.POST, "/api/credit-applications/*/approve")
+                                                .hasRole("ADMIN")
+                                                .requestMatchers(HttpMethod.POST, "/api/credit-applications/*/reject")
+                                                .hasRole("ADMIN")
+
                                                 .anyRequest().authenticated())
                                 .sessionManagement(session -> session
                                                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))

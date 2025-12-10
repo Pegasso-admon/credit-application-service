@@ -13,6 +13,7 @@ public interface CreditApplicationMapper {
 
     @Mapping(target = "status", source = "status")
     @Mapping(target = "affiliate", source = "affiliate")
+    @Mapping(target = "interestRate", source = "proposedRate")
     CreditApplication toDomain(CreditApplicationEntity entity);
 
     @Mapping(target = "id", ignore = true)
@@ -26,6 +27,7 @@ public interface CreditApplicationMapper {
 
     @Mapping(target = "status", source = "status")
     @Mapping(target = "affiliate", source = "affiliate")
+    @Mapping(target = "proposedRate", source = "interestRate")
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
     CreditApplicationEntity toEntity(CreditApplication domain);
