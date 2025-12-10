@@ -4,10 +4,10 @@
 
 -- Insert test users (password: password123)
 INSERT INTO users (username, document, password, full_name, email, role, active) VALUES
-('admin', '1000000001', '$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG', 'System Administrator', 'admin@coopcredit.com', 'ROLE_ADMIN', true),
-('analyst1', '1000000002', '$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG', 'Maria Rodriguez', 'analyst1@coopcredit.com', 'ROLE_ANALYST', true),
-('affiliate1', '1017654321', '$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG', 'Juan Perez', 'affiliate1@coopcredit.com', 'ROLE_AFFILIATE', true),
-('affiliate2', '1018765432', '$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG', 'Ana Garcia', 'affiliate2@coopcredit.com', 'ROLE_AFFILIATE', true);
+('admin', '1000000001', '$2a$10$2u5e06eDsY6J4BepC1Jv7erAzCSOc98VU4MnaZ7NpFWwoYydcSl5S', 'System Administrator', 'admin@coopcredit.com', 'ROLE_ADMIN', true),
+('analyst1', '1000000002', '$2a$10$2u5e06eDsY6J4BepC1Jv7erAzCSOc98VU4MnaZ7NpFWwoYydcSl5S', 'Maria Rodriguez', 'analyst1@coopcredit.com', 'ROLE_ANALYST', true),
+('affiliate1', '1017654321', '$2a$10$2u5e06eDsY6J4BepC1Jv7erAzCSOc98VU4MnaZ7NpFWwoYydcSl5S', 'Juan Perez', 'affiliate1@coopcredit.com', 'ROLE_AFFILIATE', true),
+('affiliate2', '1018765432', '$2a$10$2u5e06eDsY6J4BepC1Jv7erAzCSOc98VU4MnaZ7NpFWwoYydcSl5S', 'Ana Garcia', 'affiliate2@coopcredit.com', 'ROLE_AFFILIATE', true);
 
 -- Insert test affiliates
 INSERT INTO affiliates (document, full_name, salary, affiliation_date, status) VALUES
