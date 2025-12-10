@@ -1,4 +1,4 @@
-package com.coopcredit.infrastructure.client.dto;
+wpackage com.coopcredit.infrastructure.client.dto;
 
 public record RiskEvaluationResponse(
                 String document,

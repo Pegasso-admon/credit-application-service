@@ -5,6 +5,7 @@ import com.coopcredit.domain.model.enums.ApplicationStatus;
 import com.coopcredit.domain.model.CreditApplication;
 import com.coopcredit.domain.repository.AffiliateRepositoryPort;
 import com.coopcredit.domain.repository.CreditApplicationRepositoryPort;
+import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 
@@ -40,6 +41,7 @@ import java.math.BigDecimal;
  * <li>Maximum amount validation (10x salary)</li>
  * </ul>
  */
+@Service
 public class RegisterCreditApplicationUseCase {
 
     private final CreditApplicationRepositoryPort applicationRepository;

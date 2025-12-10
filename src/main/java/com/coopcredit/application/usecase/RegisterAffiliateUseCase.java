@@ -3,6 +3,7 @@ package com.coopcredit.application.usecase;
 import com.coopcredit.domain.model.Affiliate;
 import com.coopcredit.domain.model.enums.AffiliateStatus;
 import com.coopcredit.domain.repository.AffiliateRepositoryPort;
+import org.springframework.stereotype.Service;
 
 /**
  * Use case for registering a new affiliate in the system.
@@ -33,6 +34,7 @@ import com.coopcredit.domain.repository.AffiliateRepositoryPort;
  * <li>Default status is ACTIVE</li>
  * </ul>
  */
+@Service
 public class RegisterAffiliateUseCase {
 
     private final AffiliateRepositoryPort affiliateRepository;

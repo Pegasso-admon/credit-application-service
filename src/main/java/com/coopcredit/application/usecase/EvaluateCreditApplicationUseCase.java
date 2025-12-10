@@ -6,6 +6,7 @@ import com.coopcredit.domain.model.RiskEvaluation;
 import com.coopcredit.domain.model.enums.RiskLevel;
 import com.coopcredit.domain.repository.CreditApplicationRepositoryPort;
 import com.coopcredit.domain.service.RiskEvaluationPort;
+import org.springframework.stereotype.Service;
 
 /**
  * Use case for evaluating a credit application.
@@ -54,6 +55,7 @@ import com.coopcredit.domain.service.RiskEvaluationPort;
  * <li>Requested amount must not exceed 10x monthly salary</li>
  * </ul>
  */
+@Service
 public class EvaluateCreditApplicationUseCase {
 
         private final CreditApplicationRepositoryPort applicationRepository;
