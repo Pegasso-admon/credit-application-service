@@ -149,7 +149,7 @@ public class RiskCentralClient implements RiskEvaluationPort {
                     .body(RiskEvaluationResponse.class);
         } catch (Exception e) {
             log.warn("Failed to connect to Risk Central Service at {}. Using Fallback Mock.", url);
-            return mockRiskResponse(request.document());
+            return mockRiskResponse(request.documento());
         }
     }
 
@@ -181,7 +181,7 @@ public class RiskCentralClient implements RiskEvaluationPort {
             detail = "Excellent credit history (simulated).";
         }
 
-        return new RiskEvaluationResponse(score, riskLevel, detail);
+        return new RiskEvaluationResponse(document, score, riskLevel, detail);
     }
 
     /**

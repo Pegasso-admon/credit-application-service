@@ -70,7 +70,8 @@ public class SecurityConfig {
         @Bean
         public CorsConfigurationSource corsConfigurationSource() {
                 CorsConfiguration configuration = new CorsConfiguration();
-                configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://localhost:3000"));
+                configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://localhost:5174",
+                                "http://localhost:3000"));
                 configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                 configuration.setAllowedHeaders(Arrays.asList("*"));
                 configuration.setAllowCredentials(true);
@@ -108,10 +109,12 @@ public class SecurityConfig {
                                                 .requestMatchers(HttpMethod.PUT, "/api/affiliates/**")
                                                 .hasRole("ADMIN")
 
-                                                // Credit Application endpoints
-                                                .requestMatchers(HttpMethod.POST, "/api/credit-applications")
-                                                .hasRole("AFFILIATE")
-                                                .requestMatchers(HttpMethod.GET, "/api/credit-applications/**")
+                                                // Credit Application endpoints (both /api/ and /api/v1/)
+                                                .requestMatchers(HttpMethod.POST, "/api/credit-applications",
+                                                                "/api/v1/credit-applications")
+                                                .hasAnyRole("AFFILIATE", "ANALYST", "ADMIN")
+                                                .requestMatchers(HttpMethod.GET, "/api/credit-applications/**",
+                                                                "/api/v1/credit-applications/**")
                                                 .authenticated()
                                                 .requestMatchers(HttpMethod.POST, "/api/credit-applications/*/evaluate")
                                                 .hasRole("ANALYST")

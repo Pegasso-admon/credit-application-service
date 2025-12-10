@@ -111,8 +111,16 @@ public class EvaluateCreditApplicationUseCase {
 
                 CreditApplication savedApplication = applicationRepository.save(updatedApplication);
 
+                // Return updatedApplication (which has riskEvaluation in memory) instead of
+                // savedApplication
+                // The savedApplication comes from DB mapping which doesn't include
+                // riskEvaluation relationship
+                CreditApplication resultApplication = updatedApplication.toBuilder()
+                                .id(savedApplication.getId())
+                                .build();
+
                 return new EvaluationResult(
-                                savedApplication,
+                                resultApplication,
                                 decision.approved(),
                                 decision.reason());
         }
