@@ -123,25 +123,35 @@ const createAffiliate = async (e) => {
     e.preventDefault();
     const docNumber = document.getElementById('docNumber').value;
     const name = document.getElementById('name').value;
-    const salary = document.getElementById('salary').value;
+    const salaryInput = document.getElementById('monthlySalary') || document.getElementById('salary');
+    const salary = salaryInput ? salaryInput.value : 0;
+
+    const payload = {
+        document: docNumber,
+        name: name,
+        salary: Number(salary),
+        affiliationDate: new Date().toISOString().split('T')[0]
+    };
+
+    console.log('Sending Affiliate Payload:', payload);
 
     try {
-        const response = await fetch('/api/v1/affiliates', {
+        const response = await fetch('http://localhost:8080/api/v1/affiliates', {
             method: 'POST',
             headers: getHeaders(),
-            body: JSON.stringify({
-                documentNumber: docNumber,
-                name: name,
-                monthlySalary: parseFloat(salary)
-            })
+            body: JSON.stringify(payload)
         });
 
-        if (!response.ok) throw { status: response.status, message: 'Failed to create affiliate' };
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.detail || 'Failed to create affiliate');
+        }
 
-        showNotification('Affiliate created successfully', 'success');
+        showNotification('Affiliate created successfully!', 'success');
         forms.affiliate.reset();
     } catch (error) {
-        handleApiError(error);
+        console.error('Create affiliate error:', error);
+        showNotification(error.message || 'Failed to create affiliate', 'error');
     }
 };
 
@@ -209,76 +219,66 @@ const loadApplications = async () => {
     }
 };
 
-const evaluateApplication = async (id, affiliateId) => {
+const evaluateApplication = async (id) => {
     try {
-        const response = await fetch('/api/evaluations', {
+        const response = await fetch(`http://localhost:8080/api/evaluations/${id}`, {
             method: 'POST',
-            headers: getHeaders(),
-            body: JSON.stringify({
-                creditApplicationId: id,
-                affiliateId: affiliateId
-            })
+            headers: getHeaders()
         });
 
-        if (!response.ok) throw { status: response.status, message: 'Evaluation failed' };
+        if (!response.ok) {
+            const error = await response.json();
+            throw new Error(error.detail || 'Evaluation failed');
+        }
 
         const result = await response.json();
         showNotification(`Evaluation complete: ${result.riskLevel} - ${result.approved ? 'APPROVED' : 'REJECTED'}`,
             result.approved ? 'success' : 'error');
 
-        loadApplications(); // Refresh list to show updated status (if strictly pending filter, it disappears)
+        loadApplications(); // Refresh list
     } catch (error) {
-        handleApiError(error);
+        console.error('Evaluation error:', error);
+        showNotification(error.message || 'Evaluation failed', 'error');
     }
 };
 
 const renderApplications = (applications) => {
-    elements.applicationsBody.innerHTML = '';
+    if (!elements.applicationsBody) return;
 
-    if (applications.length === 0) {
-        elements.applicationsBody.innerHTML = '<tr><td colspan="7" class="text-center">No pending applications found</td></tr>';
+    if (!applications || applications.length === 0) {
+        elements.applicationsBody.innerHTML = `
+            <tr>
+                <td colspan="7" style="text-align: center; padding: 2rem; color: var(--text-secondary);">
+                    <p style="margin: 0; font-size: 1.1rem;">📋 No pending applications</p>
+                    <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem;">New applications will appear here</p>
+                </td>
+            </tr>
+        `;
         return;
     }
 
-    applications.forEach(app => {
-        const tr = document.createElement('tr');
-
-        const date = new Date(app.applicationDate).toLocaleDateString();
-
-        tr.innerHTML = `
-            <td>${app.id}</td>
-            <td>${app.affiliateId}</td>
-            <td>${date}</td>
-            <td>$${app.requestedAmount.toLocaleString()}</td>
-            <td>${app.term} mo</td>
-            <td><span class="status-badge status-${app.status.toLowerCase()}">${app.status}</span></td>
-            <td>
-                <button class="btn btn-primary btn-sm evaluate-btn" data-id="${app.id}" data-affiliate="${app.affiliateId}">
-                    Evaluate
-                </button>
-            </td>
-        `;
-        elements.applicationsBody.appendChild(tr);
-    });
-
-    // Add listeners to new buttons
-    document.querySelectorAll('.evaluate-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            evaluateApplication(btn.dataset.id, btn.dataset.affiliate);
-        });
-    });
+    elements.applicationsBody.innerHTML = applications
+        .map((app) => `
+            <tr>
+                <td>${app.id || 'N/A'}</td>
+                <td>${app.affiliate?.name || app.affiliate?.document || 'N/A'}</td>
+                <td>${new Date(app.applicationDate).toLocaleDateString()}</td>
+                <td>$${(app.requestedAmount || 0).toLocaleString()}</td>
+                <td>${app.termMonths || 'N/A'} months</td>
+                <td><span class="status status-${(app.status || 'unknown').toLowerCase()}">${app.status || 'N/A'}</span></td>
+                <td>
+                    <button class="btn-action" onclick="evaluateApplication(${app.id})">Evaluate</button>
+                </td>
+            </tr>
+        `)
+        .join('');
 };
 
 // Initialization
 document.addEventListener('DOMContentLoaded', () => {
     updateView();
 
-    forms.login.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const username = document.getElementById('username').value;
-        const password = document.getElementById('password').value;
-        login(username, password);
-    });
+    // Removed duplicate login listener
 
     forms.affiliate.addEventListener('submit', createAffiliate);
     forms.credit.addEventListener('submit', createCreditApplication);
@@ -286,3 +286,6 @@ document.addEventListener('DOMContentLoaded', () => {
     elements.refreshBtn.addEventListener('click', loadApplications);
     elements.logoutBtn.addEventListener('click', logout);
 });
+
+// Expose function to global scope for HTML onclick
+window.evaluateApplication = evaluateApplication;
