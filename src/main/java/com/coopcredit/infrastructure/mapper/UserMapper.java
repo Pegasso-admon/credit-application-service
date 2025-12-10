@@ -18,6 +18,7 @@ public interface UserMapper {
      * @param entity the UserEntity to convert
      * @return the User domain model
      */
+    @Mapping(target = "enabled", source = "active")
     @Mapping(target = "role", source = "role")
     User toDomain(UserEntity entity);
 
@@ -27,6 +28,7 @@ public interface UserMapper {
      * @param domain the User domain model to convert
      * @return the UserEntity
      */
+    @Mapping(target = "active", source = "enabled")
     @Mapping(target = "role", source = "role")
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)

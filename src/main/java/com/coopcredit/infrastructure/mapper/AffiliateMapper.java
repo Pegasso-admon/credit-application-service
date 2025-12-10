@@ -11,6 +11,7 @@ import java.util.List;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface AffiliateMapper {
 
+    @Mapping(target = "name", source = "fullName")
     @Mapping(target = "status", source = "status")
     Affiliate toDomain(AffiliateEntity entity);
 
@@ -24,6 +25,7 @@ public interface AffiliateMapper {
      * @param domain the Affiliate domain model to convert
      * @return the AffiliateEntity
      */
+    @Mapping(target = "fullName", source = "name")
     @Mapping(target = "status", source = "status")
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
