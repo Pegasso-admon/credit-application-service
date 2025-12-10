@@ -40,7 +40,8 @@ public class SecurityConfig {
         private final JwtAuthenticationEntryPoint authenticationEntryPoint;
 
         private static final String[] PUBLIC_ENDPOINTS = {
-                        "/api/v1/auth/**",
+                        "/api/auth/**", // Authentication endpoints (login, register)
+                        "/api/v1/auth/**", // Legacy v1 auth endpoints if any
                         "/actuator/health",
                         "/actuator/info",
                         "/v3/api-docs/**",

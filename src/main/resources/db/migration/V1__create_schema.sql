@@ -10,7 +10,7 @@ CREATE TABLE users (
     password VARCHAR(255) NOT NULL,
     full_name VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
-    role VARCHAR(20) NOT NULL CHECK (role IN ('ROLE_AFILIADO', 'ROLE_ANALISTA', 'ROLE_ADMIN')),
+    role VARCHAR(20) NOT NULL CHECK (role IN ('ROLE_AFFILIATE', 'ROLE_ANALYST', 'ROLE_ADMIN')),
     active BOOLEAN NOT NULL DEFAULT TRUE,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
@@ -21,7 +21,7 @@ CREATE INDEX idx_document ON users(document);
 CREATE INDEX idx_email ON users(email);
 
 COMMENT ON TABLE users IS 'System users with authentication and authorization';
-COMMENT ON COLUMN users.role IS 'User role: ROLE_AFILIADO, ROLE_ANALISTA, or ROLE_ADMIN';
+COMMENT ON COLUMN users.role IS 'User role: ROLE_AFFILIATE, ROLE_ANALYST, or ROLE_ADMIN';
 
 -- Affiliates table
 CREATE TABLE affiliates (
