@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,11 +22,11 @@ import java.util.List;
  * Controller for managing Affiliate resources.
  * Exposes REST endpoints for creating and retrieving affiliates.
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/affiliates")
 @RequiredArgsConstructor
-@Slf4j
-@Tag(name = "Affiliates", description = "Operations for managing affiliates")
+@Tag(name = "Affiliates", description = "Operations for affiliates")
 public class AffiliateController {
 
     private final AffiliateRepositoryPort affiliateRepository;

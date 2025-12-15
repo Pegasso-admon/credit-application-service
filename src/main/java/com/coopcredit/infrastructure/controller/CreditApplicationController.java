@@ -13,6 +13,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,18 +26,17 @@ import java.util.List;
 /**
  * REST Controller for credit applications.
  */
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/credit-applications")
 @RequiredArgsConstructor
-@Slf4j
 @Tag(name = "Credit Applications", description = "Operations for credit applications")
 public class CreditApplicationController {
 
-        private final CreditApplicationRepositoryPort repository;
-        private final AffiliateRepositoryPort affiliateRepository;
-        private final EvaluateCreditApplicationUseCase evaluateUseCase;
-        private final CreditApplicationMapper mapper;
-
+    private final CreditApplicationRepositoryPort repository;
+    private final AffiliateRepositoryPort affiliateRepository;
+    private final EvaluateCreditApplicationUseCase evaluateUseCase;
+    private final CreditApplicationMapper mapper;
         @PostMapping
         @PreAuthorize("hasAnyRole('AFFILIATE', 'ANALYST', 'ADMIN')")
         @Operation(summary = "Create Application", description = "Creates a new credit application")

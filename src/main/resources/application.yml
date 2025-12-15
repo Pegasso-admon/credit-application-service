@@ -68,6 +68,10 @@ risk-central:
   write-timeout: 5000
   timeout: 5000
 
+risk:
+  central:
+    base-url: ${RISK_CENTRAL_URL:http://localhost:8081}
+
 credit-policies:
   minimum-seniority-months: 6
   maximum-debt-to-income-ratio: 40.0
